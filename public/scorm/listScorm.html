@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scorm Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Scorm Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+    </nav>
+    <div class="container">
+        <div class="d-flex justify-content-between">
+        <div aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lista de Scorm</li>
+            </ol>
+        </div>
+        <div>
+            <a class="btn btn-primary" href="/zip">Agregar Scorm</a>
+        </div>
+    </div>
+    <main>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre del Scorm</th>
+                    <th scope="col">Link recurso</th>
+                    <th scope="col">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="listScorm">
+
+            </tbody>
+        </table>
+    </main>
+    </div>
+</body>
+<script>
+    window.onload = async () => {
+        const URL = window.location.origin
+        const table = document.getElementById('listScorm')
+        const response = await fetch(`${URL}/scorm/`)
+        const data = await response.json()
+        table.innerHTML = data.map((item, index) => `
+            <tr>
+                <th scope="row">${index + 1}</th>
+                <td>${item.folder}</td>
+                <td>${item.url}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" target="_black">Copiar Link</button>
+                    <a class="btn btn-outline-primary btn-sm" href="/view/?scorm=${item.url}" target="_black">Ver Scorm</a>
+                </td>
+            </tr>
+        `)
+    }
+</script>
+
+</html>
