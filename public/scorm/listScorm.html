@@ -22,31 +22,31 @@
     </nav>
     <div class="container">
         <div class="d-flex justify-content-between">
-        <div aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Lista de Scorm</li>
-            </ol>
+            <div aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Lista de Scorm</li>
+                </ol>
+            </div>
+            <div>
+                <a class="btn btn-primary" href="/zip">Agregar Scorm</a>
+            </div>
         </div>
-        <div>
-            <a class="btn btn-primary" href="/zip">Agregar Scorm</a>
-        </div>
-    </div>
-    <main>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Nombre del Scorm</th>
-                    <th scope="col">Link recurso</th>
-                    <th scope="col">Acción</th>
-                </tr>
-            </thead>
-            <tbody id="listScorm">
+        <main>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre del Scorm</th>
+                        <th scope="col">Link recurso</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="listScorm">
 
-            </tbody>
-        </table>
-    </main>
+                </tbody>
+            </table>
+        </main>
     </div>
 </body>
 <script>
@@ -61,11 +61,18 @@
                 <td>${item.folder}</td>
                 <td>${item.url}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" target="_black">Copiar Link</button>
+                    <button class="btn btn-primary btn-sm" onclick="handleCopy('${item.url}')">Copiar Link</button>
                     <a class="btn btn-outline-primary btn-sm" href="/view/?scorm=${item.url}" target="_black">Ver Scorm</a>
                 </td>
             </tr>
         `)
+
+
+    }
+
+    async function handleCopy(textToCopy) {
+        console.log('textToCopy', textToCopy)
+        await navigator.clipboard.writeText(textToCopy)
     }
 </script>
 

@@ -83,7 +83,7 @@ export class ScormService {
       data = data.replace('</title>', '</title>\n    <script src="https://rise-scorm-cdn.pages.dev/main.js"></script>');
       data = data.replace('finishQuiz(passed, score, id) {', `finishQuiz(passed, score, id) {\n  sendDataAcropolis(score)`)
       data = data.replace(`console.log('Warning: Course was unable to find the LMS API for ' + funcName + '. Course may have been launched from scormcontent/index.html, or the course package is not within an LMS. Saving of student data will not occur.');`, `console.info("INFO: Scorm cargado en Acropolis")`)
-      console.log('data', data)
+      // console.log('data', data)
       await writeFileAsync(filePath, data, 'utf8');
 
       return true;

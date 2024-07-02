@@ -36,6 +36,9 @@
         const id = url.searchParams.get('id');
         const object = url.searchParams.get('object');
         const resource = url.searchParams.get('resource')
+        if (!id || !object || !resource) {
+          alert('No tiene los parametros para funcionar en acropolis')
+        }
         iframe.setAttribute('src', scorm + `#?id=${id}&object=${object}&resource=${resource}`)
     }
 </script>
