@@ -1,4 +1,4 @@
-import { Controller, Get, InternalServerErrorException, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Delete, Get, InternalServerErrorException, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ScormService } from './scorm.service';
 
@@ -31,8 +31,8 @@ export class ScormController {
   //   return this.scormService.update(+id, updateScormDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.scormService.remove(+id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.scormService.remove(+id);
+  }
 }

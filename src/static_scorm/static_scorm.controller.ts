@@ -8,7 +8,7 @@ export class StaticScormController {
   
   @Get('')
   index() {
-    return this.renderStatic('listScorm');
+    return this.renderStatic('index');
   }
 
   @Get('zip')
