@@ -34,10 +34,10 @@ export class ScormService {
       const nameScorm = await this.unziped(uploadPath, extractPath)
       // Agregar el script personalizado
       const routeScorm = `${extractPath}/${nameScorm}/scormcontent/index.html`
-      await this.addScript(routeScorm)
+      await this.addScript(routeScorm, nameScorm)
       // Datos para guardar en la DB
       const baseUrl = this.configService.get<string>('BASE_URL')
-      const link = `${baseUrl}/${nameScorm}/scormcontent/`
+      const link = `${baseUrl}/files/${nameScorm}/scormcontent/`
       const body = {
         fileName: file.originalname,
         folder: nameScorm,
@@ -95,7 +95,7 @@ export class ScormService {
     }
   }
 
-  async addScript(filePath: string): Promise<boolean> {
+  async addScript(filePath: string, nameScorm): Promise<boolean> {
     const readFileAsync = promisify(readFile);
     const writeFileAsync = promisify(writeFile);
     try {
@@ -103,6 +103,22 @@ export class ScormService {
       data = data.replace('</title>', '</title>\n    <script src="https://rise-scorm-cdn.pages.dev/main.js"></script>');
       data = data.replace('finishQuiz(passed, score, id) {', `finishQuiz(passed, score, id) {\n  sendDataAcropolis(score)`)
       data = data.replace(`console.log('Warning: Course was unable to find the LMS API for ' + funcName + '. Course may have been launched from scormcontent/index.html, or the course package is not within an LMS. Saving of student data will not occur.');`, `console.info("INFO: Scorm cargado en Acropolis")`)
+      // data = data.replace(`async function __loadJsonp(id, path) {`, `async function __loadJsonp(id, path) {\n  
+      //   const title = "${nameScorm}";\n  
+      //   const request = await fetch("http://localhost:3000/student/?scorm=" + title);
+      //   const student = await request.json();
+      //   if(student?.statusCode !== 200){
+      //     const request = fetch("http://localhost:3000/student/" + window?.scormParams?.id, { method: "PUT", body: JSON.stringify({
+      //       progress: "";
+      //       qualification: null;
+      //       scorm: "${nameScorm}";
+      //       url: "";
+      //   }) })
+      //   }
+      //   else {
+      //     console.log("Setear en window")
+      //   }
+      // `)
       await writeFileAsync(filePath, data, 'utf8');
       return true;
     } catch (err) {
