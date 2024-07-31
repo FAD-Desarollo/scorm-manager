@@ -1,6 +1,6 @@
 # files
-/files
-/uploads
+# /files
+# /uploads
 
 # compiled output
 /dist
