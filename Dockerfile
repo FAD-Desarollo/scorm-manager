@@ -28,17 +28,11 @@ RUN npm ci --only=production
 # Copia los archivos construidos y los archivos estáticos
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/public ./public
-
-# Copia los archivos construidos y los archivos estáticos
-COPY --from=build /app/dist ./dist
 COPY --from=build /app/uploads ./uploads
-
-# Copia los archivos construidos y los archivos estáticos
-COPY --from=build /app/dist ./dist
 COPY --from=build /app/files ./files
 
 # Expone el puerto 3000
 EXPOSE 3000
 
 # Comando para iniciar la aplicación
-CMD [ "node", "dist/main" ]
+CMD [ "npm", "run", "start:prod" ]
