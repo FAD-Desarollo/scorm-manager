@@ -44,6 +44,7 @@
                         <th scope="col">Nombre</th>
                         <th scope="col">Link</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Creation</th>
                         <th scope="col">Acción</th>
                     </tr>
                 </thead>
@@ -61,7 +62,6 @@
     }
 
     async function handleCopy(textToCopy) {
-        console.log('textToCopy', textToCopy)
         await navigator.clipboard.writeText(textToCopy)
     }
 
@@ -88,13 +88,11 @@
                 <th scope="row">${item.id}</th>
                 <td>${item.fileName}</td>
                 <td>${item.folder}</td>
-                <td>${item.link}</td>
+                <td>https://scorm-manager.aden.org/view/?scorm=${item.link}</td>
                 <td>${item.status ? "Cargado" : "Eliminado"}</td>
+                <td>${new Date(item.creationDate)?.toLocaleDateString()}</td>
                 <td>
-                    <button class="btn btn-primary btn-sm" onclick="handleCopy('${item.link}')">
-                        <i class="fa-solid fa-copy"></i>    
-                    </button>
-                    <a class="btn btn-outline-primary btn-sm" href="/view/?scorm=${item.link}" target="_black">
+                    <a class="btn btn-outline-primary btn-sm" href="https://scorm-manager.aden.org/view/?scorm=${item.link}" target="_black">
                         <i class="fa-solid fa-eye"></i>
                     </a>
                     <button class="btn btn-danger btn-sm" onclick="handleDelete('${item.id}')">
