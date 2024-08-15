@@ -1,0 +1,101 @@
+# CREAMOS LOS DISCOS 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: scorm-aden-pv-01
+  labels:
+    type: local
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /data/pv-data/
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: scorm-aden-pvc-01
+  namespace: default
+  labels:
+    app: scorm-aden-org
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: scorm-aden-pvc-02
+  namespace: default
+  labels:
+    app: scorm-aden-org
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+# CREAMOS EL POD DE ODOO
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scorm-aden-org
+  labels:
+    app: scorm-aden-org
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scorm-aden-org
+  template:
+    metadata:
+      labels:
+        app: scorm-aden-org
+    spec:
+      containers:
+      - name: scorm-aden-org
+        image: gcr.io/odoo-erp-calendar/github.com/aden-desarrollo/scorm-aden-org
+        ports:
+        - containerPort: 3000
+        securityContext:
+          privileged: true
+          runAsUser: 0 
+        env:
+        - name: DATABASE_HOST
+          value: "10.68.48.55"
+        - name: DATABASE_PORT
+          value: "5432"
+        - name: DATABASE_NAME
+          value: scorm
+        - name: DATABASE_USERNAME
+          value: scorm
+        - name: DATABASE_PASSWORD
+          value: Pj&X?rmHCikemnr
+        - name: POSTGRES_USER
+          value: scorm
+        - name: POSTGRES_PASSWORD
+          value: Pj&X?rmHCikemnr
+        - name: POSTGRES_DB
+          value: scorm
+        - name: BASE_URL
+          value: https://scorm-manager.aden.org
+        volumeMounts:
+        - name: scorm-pv-01
+          mountPath: /app/files
+          subPath: files
+        - name: scorm-pv-02
+          mountPath: /app/uploads
+          subPath: uploads
+      volumes:
+      - name: scorm-pv-01
+        persistentVolumeClaim:
+          claimName: scorm-aden-pvc-01
+      - name: scorm-pv-02
+        persistentVolumeClaim:
+          claimName: scorm-aden-pvc-02
