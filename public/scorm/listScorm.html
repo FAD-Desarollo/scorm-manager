@@ -45,6 +45,7 @@
                         <th scope="col">Link</th>
                         <th scope="col">Status</th>
                         <th scope="col">Creation</th>
+                        <th scope="col">Type</th>
                         <th scope="col">Acción</th>
                     </tr>
                 </thead>
@@ -91,6 +92,7 @@
                 <td>https://scorm-manager.aden.org/view/?scorm=${item.link}</td>
                 <td>${item.status ? "Cargado" : "Eliminado"}</td>
                 <td>${new Date(item.creationDate)?.toLocaleDateString()}</td>
+                <td>${item?.typeScorm || 'carga_antigua'}</td>
                 <td>
                     <a class="btn btn-outline-primary btn-sm" href="https://scorm-manager.aden.org/view/?scorm=${item.link}" target="_black">
                         <i class="fa-solid fa-eye"></i>

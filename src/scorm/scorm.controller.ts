@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, InternalServerErrorException, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, InternalServerErrorException, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ScormService } from './scorm.service';
 
@@ -8,9 +8,9 @@ export class ScormController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file) {
+  async uploadFile(@UploadedFile() file, @Body('typeScorm') typeScorm: string) {
     try {
-      return await this.scormService.uploadFile(file)
+      return await this.scormService.uploadFile(file, typeScorm)
     } catch (error) {
       throw new InternalServerErrorException(error)
     }

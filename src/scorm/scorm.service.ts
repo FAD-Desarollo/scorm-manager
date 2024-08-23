@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createWriteStream, createReadStream, readFile, writeFile, statSync, readdirSync } from 'fs';
+import { createWriteStream, createReadStream, readFile, writeFile, statSync, readdirSync, existsSync } from 'fs';
 import * as path from 'path';
 import * as unzipper from 'unzipper';
 import { promisify } from 'util';
 import { Scorm } from './entities/scorm.entity';
 import { Repository } from 'typeorm';
+
+enum TypeScorm {
+  RISE = 'rise_articulate',
+  OTHER = 'otro'
+}
 
 @Injectable()
 export class ScormService {
@@ -18,10 +23,9 @@ export class ScormService {
     private scormORM: Repository<Scorm>
   ) { }
 
-  async uploadFile(file) {
+  async uploadFile(file, typeScorm) {
     try {
       const uploadPath = path.join(__dirname, '..', '..', 'uploads', file.originalname);
-
       await new Promise<void>((resolve, reject) => {
         const writeStream = createWriteStream(uploadPath);
         writeStream.write(file.buffer);
@@ -33,16 +37,22 @@ export class ScormService {
       // Descomprimir el paquete SCORM
       const nameScorm = await this.unziped(uploadPath, extractPath)
       // Agregar el script personalizado
-      const routeScorm = `${extractPath}/${nameScorm}/scormcontent/index.html`
-      await this.addScript(routeScorm, nameScorm)
-      // Datos para guardar en la DB
+       // Datos para guardar en la DB
       const baseUrl = this.configService.get<string>('BASE_URL')
-      const link = `${baseUrl}/files/${nameScorm}/scormcontent/`
+      let link = `${baseUrl}/files/${nameScorm}`
+      let routeScorm = `${extractPath}/${nameScorm}`
+      if (typeScorm === TypeScorm.RISE) {
+        link = link + '/scormcontent/'
+        routeScorm = routeScorm + '/scormcontent/index.html'
+        await this.addScript(routeScorm, nameScorm)
+      }
+      
       const body = {
         fileName: file.originalname,
         folder: nameScorm,
         link: link,
-        status: true
+        status: true,
+        typeScorm: typeScorm as string
       }
       // Creo registro en la DB
       return await this.scormORM.save(body)
@@ -54,23 +64,19 @@ export class ScormService {
 
   async unziped(uploadPath: string, extractPath: string): Promise<string> {
     try {
+      // Obtener el nombre del archivo sin la extensión
+      const zipName = path.parse(uploadPath).name;
+      const targetPath = path.join(extractPath, zipName);
+  
+      // Descomprimir en la carpeta con el mismo nombre que el ZIP
       await new Promise<void>((resolve, reject) => {
         createReadStream(uploadPath)
-          .pipe(unzipper.Extract({ path: extractPath }))
+          .pipe(unzipper.Extract({ path: targetPath }))
           .on('close', resolve)
           .on('error', reject);
       });
-
-      // List the directories inside the extractPath
-      const folders = readdirSync(extractPath).filter((file) => {
-        return statSync(path.join(extractPath, file)).isDirectory();
-      });
-
-      if (folders.length > 0) {
-        return folders[0]; // Return the first folder found
-      } else {
-        throw new Error('No folders found in the extracted path');
-      }
+  
+      return zipName; // Retornar el nombre de la carpeta que se utilizó para descomprimir
     } catch (error) {
       console.error('Error al descomprimir el zip', error);
       throw new Error(error.message);

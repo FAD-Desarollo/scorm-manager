@@ -28,8 +28,16 @@
             </ol>
         </nav>
         <main>
-            <div class="progress  mb-2" id="progressContainer" style="display: none;" >
-                <div class="progress-bar" role="progressbca" id="progressBar" style="width: 0%;" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress  mb-2" id="progressContainer" style="display: none;">
+                <div class="progress-bar" role="progressbca" id="progressBar" style="width: 0%;" aria-valuenow="80"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Tipo de Scorm</label>
+                <select class="form-select" id="type_scorm">
+                    <option value="rise_articulate">Rise - Articuleta</option>
+                    <option value="otro">Otro</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Paquete Scorm (ZIP)</label>
@@ -45,15 +53,18 @@
         const URL = window.location.origin
 
         const scorm = document.getElementById('scorm')
+        const typeScormElement = document.getElementById('type_scorm')
+        const typeScorm = typeScormElement.value;
         const button = document.getElementById('saveButton')
         const progressContent = document.getElementById('progressContainer')
         const progressBar = document.getElementById('progressBar')
 
         const file = scorm.files[0]
-        if (file) {
+        if (file && typeScorm) {
             try {
                 const formData = new FormData();
                 formData.append('file', file);
+                formData.append('typeScorm', typeScorm)
                 button.innerText = 'Guardando...'
                 button.disabled = true
 

@@ -19,4 +19,7 @@ export class Scorm {
 
     @Column()
     status: boolean
+
+    @Column({ nullable: true  })
+    typeScorm: string
 }
